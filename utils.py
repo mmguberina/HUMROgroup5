@@ -44,20 +44,20 @@ def showMessage(message, cloned_image, frameShape):
 
 
 def doACounterClockwiseCircle(rectangleCoordinates, frameShape):
-    conditionGoLeft = rectangleCoordinates['top'] == TOP_START \
-                        and rectangleCoordinates['bottom'] == BOTTOM_START  \
+    conditionGoLeft = rectangleCoordinates['top'] <= TOP_START \
+                        and rectangleCoordinates['bottom'] <= BOTTOM_START  \
                         and rectangleCoordinates['right'] > BORDER_LIMIT
 
     conditionGoDown = rectangleCoordinates['bottom'] < frameShape['height'] - BORDER_LIMIT \
-                        and rectangleCoordinates['right'] == BORDER_LIMIT 
+                        and rectangleCoordinates['right'] <= BORDER_LIMIT 
                         #and rectangleCoordinates['left'] == BOTTOM_START + (LEFT_START - RIGHT_START)
 
-    conditionGoRight = rectangleCoordinates['bottom'] == frameShape['height'] - BORDER_LIMIT\
+    conditionGoRight = rectangleCoordinates['bottom'] >= frameShape['height'] - BORDER_LIMIT\
                         and rectangleCoordinates['left'] < frameShape['width'] - BORDER_LIMIT
                         # and rectangleCoordinates['top'] == BORDER_LIMIT + (BOTTOM_START - TOP_START)\
 
     conditionGoUp = rectangleCoordinates['top'] > BORDER_LIMIT \
-                        and rectangleCoordinates['left'] == frameShape['width'] - BORDER_LIMIT
+                        and rectangleCoordinates['left'] >= frameShape['width'] - BORDER_LIMIT
                         #and rectangleCoordinates['right'] == frameShape['width'] - BORDER_LIMIT - (LEFT_START - RIGHT_START) \
 
     offset = 2

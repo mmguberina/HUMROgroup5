@@ -101,8 +101,8 @@ if __name__ == "__main__":
             doACounterClockwiseCircle(rectangleCoordinates, frameShape)
 
             # we're done with a class if the rectangle went back to the upper right corner
-            if rectangleCoordinates['top'] == BORDER_LIMIT \
-                    and rectangleCoordinates['left'] == frameShape['width'] - BORDER_LIMIT:
+            if rectangleCoordinates['top'] <= BORDER_LIMIT \
+                    and rectangleCoordinates['left'] >= frameShape['width'] - BORDER_LIMIT:
                 if currentClass < len(classes):
                     currentClass += 1
                     rectangleCoordinates = updateRectangleShape(currentClass, rectangleCoordinates)
