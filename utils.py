@@ -60,7 +60,7 @@ def doACounterClockwiseCircle(rectangleCoordinates, frameShape):
                         and rectangleCoordinates['left'] == frameShape['width'] - BORDER_LIMIT
                         #and rectangleCoordinates['right'] == frameShape['width'] - BORDER_LIMIT - (LEFT_START - RIGHT_START) \
 
-    offset = 5
+    offset = 2
     if conditionGoLeft:
         moveRectangleLeft(rectangleCoordinates, offset)
 
