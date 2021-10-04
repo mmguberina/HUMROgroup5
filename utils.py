@@ -8,12 +8,23 @@ import cv2
 #######################################
 # macros go here for use of use
 #####################################
-TOP_START = 10
-RIGHT_START = 350
-BOTTOM_START = 220
-LEFT_START = 590
+#TOP_START = 10
+#RIGHT_START = 350
+#BOTTOM_START = 220
+#LEFT_START = 590
 
-BORDER_LIMIT = 10
+TOP_START_PERC = 0.020833333333333332
+RIGHT_START_PERC = 0.546875
+BOTTOM_START_PERC = 0.4583333333333333
+LEFT_START_PERC = 0.921875
+
+
+#BORDER_LIMIT = 10
+
+#BORDER_LIMIT_WIDTH_PERC = 0.02
+BORDER_LIMIT_WIDTH_PERC = 0.03
+BORDER_LIMIT_HEIGHT_PERC = 0.92
+#BORDER_LIMIT_HEIGHT_PERC = 0.93
 
 
 # NOTE these functions should have checks via assert
@@ -22,25 +33,29 @@ BORDER_LIMIT = 10
 def moveRectangleLeft(rectangleCoordinates, amount):
     rectangleCoordinates['right'] -= amount
     rectangleCoordinates['left'] -= amount
+    return rectangleCoordinates
 
 
 def moveRectangleRight(rectangleCoordinates, amount):
     rectangleCoordinates['right'] += amount
     rectangleCoordinates['left'] += amount
+    return rectangleCoordinates
 
 def moveRectangleDown(rectangleCoordinates, amount):
     rectangleCoordinates['top'] += amount
     rectangleCoordinates['bottom'] += amount
+    return rectangleCoordinates
 
 
 def moveRectangleUp(rectangleCoordinates, amount):
     rectangleCoordinates['top'] -= amount
     rectangleCoordinates['bottom'] -= amount
+    return rectangleCoordinates
 
 def showMessage(message, cloned_image, frameShape):
     cv2.putText(cloned_image, message, 
                 (int(frameShape['width']/10), int(frameShape['height']/10)), cv2.FONT_HERSHEY_SIMPLEX, 
-                0.5, (0,0,255), 2)
+                0.7, (0,0,255), 2)
 
 
 def doACounterClockwiseCircle(rectangleCoordinates, frameShape):
@@ -73,7 +88,60 @@ def doACounterClockwiseCircle(rectangleCoordinates, frameShape):
     if conditionGoUp:
         moveRectangleUp(rectangleCoordinates, offset)
 
-def updateRectangleShape(currentClass, rectangleCoordinates):
+
+def doACounterClockwiseCirclePerc(rectangleCoordinates, frameShape):
+#    print(rectangleCoordinates)
+#    print("rectangleCoordinates['top'] /frameShape['height'] : ",   rectangleCoordinates['top'] /frameShape['height']   )
+#    print("rectangleCoordinates['right'] /frameShape['width'] : ",  rectangleCoordinates['right'] /frameShape['width']  )
+#    print("rectangleCoordinates['bottom'] /frameShape['height'] : ", rectangleCoordinates['bottom'] /frameShape['height'])
+#    print("rectangleCoordinates['left'] /frameShape['width'] : ",  rectangleCoordinates['left'] /frameShape['width']   )
+
+    conditionGoLeft = rectangleCoordinates['top'] / frameShape['height'] <= TOP_START_PERC \
+                        and rectangleCoordinates['right'] / frameShape['width'] > BORDER_LIMIT_WIDTH_PERC
+                        #and rectangleCoordinates['bottom'] / frameShape['height'] <= BOTTOM_START_PERC  \
+
+    #conditionGoDown = rectangleCoordinates['bottom']  / frameShape['height'] < 1 - BORDER_LIMIT_HEIGHT_PERC \
+    conditionGoDown = rectangleCoordinates['bottom']  / frameShape['height'] < 1 \
+                        and rectangleCoordinates['right']  / frameShape['width'] <= BORDER_LIMIT_WIDTH_PERC
+                        #and rectangleCoordinates['left'] == BOTTOM_START + (LEFT_START - RIGHT_START)
+
+    #conditionGoRight = rectangleCoordinates['bottom']  / frameShape['height'] >= 1 - BORDER_LIMIT_HEIGHT_PERC\
+    #                    and rectangleCoordinates['left']  / frameShape['width'] < 1 - BORDER_LIMIT_WIDTH_PERC
+    conditionGoRight = rectangleCoordinates['bottom']  / frameShape['height'] >= 1 \
+                        and rectangleCoordinates['left']  / frameShape['width'] < 1
+                        # and rectangleCoordinates['top'] == BORDER_LIMIT + (BOTTOM_START - TOP_START)\
+
+    #conditionGoUp = rectangleCoordinates['top']  / frameShape['height'] > BORDER_LIMIT_HEIGHT_PERC \
+    conditionGoUp = rectangleCoordinates['top']  / frameShape['height'] > 0\
+                        and rectangleCoordinates['left']  / frameShape['width'] >= 1 - BORDER_LIMIT_WIDTH_PERC
+                        #and rectangleCoordinates['left']  / frameShape['width'] >= 1 - BORDER_LIMIT_WIDTH_PERC
+                        #and rectangleCoordinates['right'] == frameShape['width'] - BORDER_LIMIT - (LEFT_START - RIGHT_START) \
+
+#    print("conditionGoLeft", conditionGoLeft)
+#    print("conditionGoDown", conditionGoDown)
+#    print("conditionGoRight", conditionGoRight)
+#    print("conditionGoUp", conditionGoUp)
+
+    offset = 6
+    if conditionGoLeft:
+        #print(rectangleCoordinates)
+        rectangleCoordinates = moveRectangleLeft(rectangleCoordinates, offset)
+        #print(rectangleCoordinates)
+
+    if conditionGoDown:
+        rectangleCoordinates = moveRectangleDown(rectangleCoordinates, offset)
+
+    if conditionGoRight:
+        rectangleCoordinates = moveRectangleRight(rectangleCoordinates, offset)
+
+    if conditionGoUp:
+        rectangleCoordinates = moveRectangleUp(rectangleCoordinates, offset)
+
+    return rectangleCoordinates
+
+
+
+def updateRectangleShape(currentClass, rectangleCoordinates, frameShape):
     if currentClass < 2:
         TOP_START_LOCAL = 10
         RIGHT_START_LOCAL = 350
@@ -112,5 +180,54 @@ def updateRectangleShape(currentClass, rectangleCoordinates):
     return rectangleCoordinates
         
 
+def updateRectangleShapeViaPercentages(currentClass, rectangleCoordinates, frameShape):
+    if currentClass < 2:
+        TOP_START_LOCAL_PERC = 0.020833333333333332
+        RIGHT_START_LOCAL_PERC = 0.546875
+        BOTTOM_START_LOCAL_PERC = 0.4583333333333333
+        LEFT_START_LOCAL_PERC = 0.921875
+    if currentClass >= 2 and currentClass <= 15:
+        TOP_START_LOCAL_PERC = 0.020833333333333332
+        RIGHT_START_LOCAL_PERC = 0.546875 + 0.15625
+        BOTTOM_START_LOCAL_PERC = 0.4583333333333333
+        LEFT_START_LOCAL_PERC = 0.921875 
+    if currentClass >= 16 and currentClass <= 17:
+        TOP_START_LOCAL_PERC = 0.020833333333333332
+        RIGHT_START_LOCAL_PERC = 0.546875
+        BOTTOM_START_LOCAL_PERC = 0.4583333333333333
+        LEFT_START_LOCAL_PERC = 0.921875
+    if currentClass == 18:
+        TOP_START_LOCAL_PERC = 0.020833333333333332
+        RIGHT_START_LOCAL_PERC = 0.546875
+        BOTTOM_START_LOCAL_PERC = 0.4583333333333333 - 0.3125
+        LEFT_START_LOCAL_PERC = 0.921875
+    if currentClass >= 19 and currentClass <= 21:
+        TOP_START_LOCAL_PERC = 0.020833333333333332
+        RIGHT_START_LOCAL_PERC = 0.546875 + 0.15625
+        BOTTOM_START_LOCAL_PERC = 0.4583333333333333
+        LEFT_START_LOCAL_PERC = 0.921875 
+    if currentClass == 22:
+        TOP_START_LOCAL_PERC = 0.020833333333333332
+        RIGHT_START_LOCAL_PERC = 0.546875
+        BOTTOM_START_LOCAL_PERC = 0.4583333333333333 - 0.20833333333333334
+        LEFT_START_LOCAL_PERC = 0.921875 
+    
+    # height / width
+#    default_frame_shape = {'height' : 480, 'width' : 640}
+#    #this_aspect_ration = frameShape['height'] / frameShape['width']
+#    #height_fix = default_frame_shape['height'] / frameShape['height']
+#    #width_fix = default_frame_shape['width'] / frameShape['width']
+# TODO fix this
+    height_fix = 1
+    width_fix = 1
+    #fix_right = frame
+    #default_aspect_ratio = 0.75
+    #currentAspectRation = frameShape['height'] / frameShape['width']
+    #fix_my_ratio = default_aspect_ratio / currentAspectRation
+    rectangleCoordinates = {'top': int(TOP_START_LOCAL_PERC * frameShape['height']) , 
+                            'right': int(RIGHT_START_LOCAL_PERC * frameShape['width'] ), 
+                            'bottom': int((BOTTOM_START_LOCAL_PERC / height_fix) * frameShape['height']), 
+                            'left': int((LEFT_START_LOCAL_PERC / width_fix) * frameShape['width'])}
+    return rectangleCoordinates
 
 

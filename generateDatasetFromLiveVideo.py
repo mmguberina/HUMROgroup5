@@ -31,14 +31,15 @@ classes = {
        19  : "ok_3_fingers",
        20  : "ok_thubm_up",
        21  : "not_ok_thumb_down",
-       22  : "equals"
+       22  : "equals",
+       23  : "fck_u"
         }
 
 
 
 frameShape = {'height' : 0, 'width': 0}
 NUM_FRAMES_START = 150
-user = "marko"
+user = input("Please enter you name: ")
 dataPoint_index = 0
 
 
@@ -47,21 +48,23 @@ if __name__ == "__main__":
     completedAClass = False
     currentClass = 0
     # this one gets the /dev/video0 camera
-    camera = cv2.VideoCapture(0)
+    #camera = cv2.VideoCapture(0)
     # reading from ip works! you just need to check that the ip is right
     # and that the ip is correct
-    #camera = cv2.VideoCapture("http://192.168.43.1:8080/video")
+    camera = cv2.VideoCapture("http://192.168.43.1:8080/video")
     
     # these need to be updated
     # also they need to be scaled according to the number of pixels
     # NOTE LEFT AND RIGHT ARE FLIPPED FOR WHATEVER REASON!!!!!!!!!!!!
-    rectangleCoordinates = {'top': TOP_START, 
-                            'right': RIGHT_START, 
-                            'bottom': BOTTOM_START, 
-                            'left': LEFT_START}
+    rectangleCoordinates = {'top': 0, 
+                            'right': 0, 
+                            'bottom': 0, 
+                            'left': 0}
+    #rectangleCoordinates = updateRectangleShapeViaPercentages(0, rectangleCoordinates, 
     # this is needed to keep track of the time
     # but also when saving the images
     num_frames = 0
+
 
     while(True):
         (grabbed, frame) = camera.read()
@@ -74,6 +77,7 @@ if __name__ == "__main__":
         clone = frame.copy()
         # get the height and width of the frame
         (frameShape['height'], frameShape['width']) = frame.shape[:2]
+        print(frameShape)
         
 
         # get the rectangle
@@ -83,10 +87,11 @@ if __name__ == "__main__":
 
         # display intro message 
         if num_frames < 50:
+            rectangleCoordinates = updateRectangleShapeViaPercentages(currentClass, rectangleCoordinates, frameShape)
             showMessage("lookin' good! get comfy :)", clone, frameShape)
 
         # warm up the user
-        if num_frames >= 50 and num_frames < 150:
+        if num_frames >= 50 and num_frames < NUM_FRAMES_START - 1:
             showMessage("follow the rectangle! start with " + str(classes[currentClass]), 
                     clone, frameShape)
 
@@ -98,14 +103,16 @@ if __name__ == "__main__":
             # this works
             #moveRectangleLeft(rectangleCoordinates, 1)
             # this is in testing
-            doACounterClockwiseCircle(rectangleCoordinates, frameShape)
+            #print(rectangleCoordinates)
+            rectangleCoordinates = doACounterClockwiseCirclePerc(rectangleCoordinates, frameShape)
+            #print(rectangleCoordinates)
 
             # we're done with a class if the rectangle went back to the upper right corner
-            if rectangleCoordinates['top'] <= BORDER_LIMIT \
-                    and rectangleCoordinates['left'] >= frameShape['width'] - BORDER_LIMIT:
+            if rectangleCoordinates['top'] / frameShape['width'] <= BORDER_LIMIT_WIDTH_PERC \
+                    and rectangleCoordinates['left']  / frameShape['width'] >= 1 - BORDER_LIMIT_WIDTH_PERC:
                 if currentClass < len(classes):
                     currentClass += 1
-                    rectangleCoordinates = updateRectangleShape(currentClass, rectangleCoordinates)
+                    rectangleCoordinates = updateRectangleShapeViaPercentages(currentClass, rectangleCoordinates, frameShape)
 
                     print("CHANGE!!:")
                     print("show " + classes[currentClass] + " in rectangle")
