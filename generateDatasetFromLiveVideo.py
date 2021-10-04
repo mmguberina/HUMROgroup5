@@ -48,10 +48,10 @@ if __name__ == "__main__":
     completedAClass = False
     currentClass = 0
     # this one gets the /dev/video0 camera
-    #camera = cv2.VideoCapture(0)
+    camera = cv2.VideoCapture(0)
     # reading from ip works! you just need to check that the ip is right
     # and that the ip is correct
-    camera = cv2.VideoCapture("http://192.168.43.1:8080/video")
+    #camera = cv2.VideoCapture("http://192.168.43.1:8080/video")
     
     # these need to be updated
     # also they need to be scaled according to the number of pixels
@@ -66,6 +66,8 @@ if __name__ == "__main__":
     num_frames = 0
 
 
+    newClassRectangleInit = False
+    numFramesToPause = 0
     while(True):
         (grabbed, frame) = camera.read()
         # possibly we'll need to resize the frame
@@ -77,7 +79,6 @@ if __name__ == "__main__":
         clone = frame.copy()
         # get the height and width of the frame
         (frameShape['height'], frameShape['width']) = frame.shape[:2]
-        print(frameShape)
         
 
         # get the rectangle
@@ -100,60 +101,69 @@ if __name__ == "__main__":
         if num_frames >= NUM_FRAMES_START:
             showMessage("show " + classes[currentClass] + " in rectangle",
                         clone, frameShape)
-            # this works
-            #moveRectangleLeft(rectangleCoordinates, 1)
-            # this is in testing
-            #print(rectangleCoordinates)
-            rectangleCoordinates = doACounterClockwiseCirclePerc(rectangleCoordinates, frameShape)
-            #print(rectangleCoordinates)
+            if not newClassRectangleInit:
+                if numFramesToPause == 0:
+                    numFramesToPause = 30 
+                    (rectangleCoordinates, rectangleBoundaries) = updateRectangleManually(currentClass, rectangleCoordinates, frameShape)
 
-            # we're done with a class if the rectangle went back to the upper right corner
-            if rectangleCoordinates['top'] / frameShape['width'] <= BORDER_LIMIT_WIDTH_PERC \
-                    and rectangleCoordinates['left']  / frameShape['width'] >= 1 - BORDER_LIMIT_WIDTH_PERC:
-                if currentClass < len(classes):
-                    currentClass += 1
-                    rectangleCoordinates = updateRectangleShapeViaPercentages(currentClass, rectangleCoordinates, frameShape)
+            else:
+                rectangleCoordinates = doACounterClockwiseCirclePerc(rectangleCoordinates, frameShape, rectangleBoundaries)
+    
+                # we're done with a class if the rectangle went back to the upper right corner
+                if rectangleCoordinates['top'] / frameShape['width'] <= BORDER_LIMIT_WIDTH_PERC \
+                        and rectangleCoordinates['left']  / frameShape['width'] >= 1 - BORDER_LIMIT_WIDTH_PERC:
+                    if currentClass < len(classes):
+                        currentClass += 1
+    
+                        print("CHANGE!!:")
+                        print("show " + classes[currentClass] + " in rectangle")
+                        showMessage("show " + classes[currentClass] + " in rectangle",
+                                    clone, frameShape)
+                        cv2.imshow("Video Feed", clone)
+                        newClassRectangleInit = False
+                    else:
+                        print("This data recording session is done! Thanks for your time!")
+                        break
+    
+                # write to file
+                if num_frames % 5 == 0:
+                    # enable when ready to roll, let's not clog system memory just yet
+                    cv2.imwrite("./dataset/" + user + "_" + str(currentClass)  + "_" + str(dataPoint_index) + ".png", frame)
+                    # immediately write the appropriate label file
+                    # it should have the same name as the picture name and the following content:
+                    # <object-class> <x_center> <y_center> <width> <height>
+                    # object class is the 0 - (Nclasses - 1) class index
+                    # the rest are floats 0 - 1, describing position relative to image shape
+                    # x_ and y_center are centerOfRectangle / int_widthOfImageInPixels 
+                    # and int_heightOfImageInPixels respectively 
+                    # and width and height are for the rectangle and are calculated like the center
+                    labelFile = open("./dataset/" + user + "_" + str(currentClass)  + "_" + str(dataPoint_index) + ".txt", "w+")
+                    x_center = ((rectangleCoordinates['left'] + rectangleCoordinates['right']) / 2.0)  \
+                                    / frameShape['width']
+                    x_center = round(x_center, 6)
+                    y_center = ((rectangleCoordinates['top'] + rectangleCoordinates['bottom']) / 2.0)  \
+                                    / frameShape['height']
+                    y_center = round(y_center, 6)
+                    rectangle_width = (rectangleCoordinates['left'] - rectangleCoordinates['right']) \
+                                    / frameShape['width']
+                    rectangle_width = round(rectangle_width, 6)
+                    rectangle_height = (rectangleCoordinates['bottom'] - rectangleCoordinates['top']) / frameShape['height']
+                    rectangle_height = round(rectangle_height, 6)
+                    labelFile.write(str(currentClass) + " " + str(x_center) + " " + str(y_center)  + " " + str(rectangle_width)
+                                         + " " + str(rectangle_height))
+                    labelFile.close()
+    
+                    # update index
+                    dataPoint_index = dataPoint_index + 1
+            if not newClassRectangleInit:
+                numFramesToPause -= 1
+                if numFramesToPause == 0:
+                    inputed = input("Are you satisfied with the triangle shape[Y/n]?")
+                    if inputed == "Y" or inputed == "y":
+                        newClassRectangleInit = True
+                    if not inputed == "Y"  and not inputed == "y" and not inputed == "n":
+                        print("i'll take that as a no.")
 
-                    print("CHANGE!!:")
-                    print("show " + classes[currentClass] + " in rectangle")
-                    showMessage("show " + classes[currentClass] + " in rectangle",
-                                clone, frameShape)
-                    cv2.imshow("Video Feed", clone)
-                    time.sleep(2)
-                else:
-                    print("This data recording session is done! Thanks for your time!")
-                    break
-
-            # write to file
-            if num_frames % 5 == 0:
-                # enable when ready to roll, let's not clog system memory just yet
-                cv2.imwrite("./dataset/" + user + "_" + str(currentClass)  + "_" + str(dataPoint_index) + ".png", frame)
-                # immediately write the appropriate label file
-                # it should have the same name as the picture name and the following content:
-                # <object-class> <x_center> <y_center> <width> <height>
-                # object class is the 0 - (Nclasses - 1) class index
-                # the rest are floats 0 - 1, describing position relative to image shape
-                # x_ and y_center are centerOfRectangle / int_widthOfImageInPixels 
-                # and int_heightOfImageInPixels respectively 
-                # and width and height are for the rectangle and are calculated like the center
-                labelFile = open("./dataset/" + user + "_" + str(currentClass)  + "_" + str(dataPoint_index) + ".txt", "w+")
-                x_center = ((rectangleCoordinates['left'] + rectangleCoordinates['right']) / 2.0)  \
-                                / frameShape['width']
-                x_center = round(x_center, 6)
-                y_center = ((rectangleCoordinates['top'] + rectangleCoordinates['bottom']) / 2.0)  \
-                                / frameShape['height']
-                y_center = round(y_center, 6)
-                rectangle_width = (rectangleCoordinates['left'] - rectangleCoordinates['right']) \
-                                / frameShape['width']
-                rectangle_width = round(rectangle_width, 6)
-                rectangle_height = (rectangleCoordinates['bottom'] - rectangleCoordinates['top']) / frameShape['height']
-                rectangle_height = round(rectangle_height, 6)
-                labelFile.write(str(currentClass) + " " + str(x_center) + " " + str(y_center)  + " " + str(rectangle_width)
-                                     + " " + str(rectangle_height))
-                labelFile.close()
-
-                # update index
-                dataPoint_index = dataPoint_index + 1
 
         num_frames += 1
         cv2.imshow("Video Feed", clone)

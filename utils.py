@@ -89,32 +89,32 @@ def doACounterClockwiseCircle(rectangleCoordinates, frameShape):
         moveRectangleUp(rectangleCoordinates, offset)
 
 
-def doACounterClockwiseCirclePerc(rectangleCoordinates, frameShape):
+def doACounterClockwiseCirclePerc(rectangleCoordinates, frameShape, rectangleBoundaries):
 #    print(rectangleCoordinates)
 #    print("rectangleCoordinates['top'] /frameShape['height'] : ",   rectangleCoordinates['top'] /frameShape['height']   )
 #    print("rectangleCoordinates['right'] /frameShape['width'] : ",  rectangleCoordinates['right'] /frameShape['width']  )
 #    print("rectangleCoordinates['bottom'] /frameShape['height'] : ", rectangleCoordinates['bottom'] /frameShape['height'])
 #    print("rectangleCoordinates['left'] /frameShape['width'] : ",  rectangleCoordinates['left'] /frameShape['width']   )
 
-    conditionGoLeft = rectangleCoordinates['top'] / frameShape['height'] <= TOP_START_PERC \
-                        and rectangleCoordinates['right'] / frameShape['width'] > BORDER_LIMIT_WIDTH_PERC
-                        #and rectangleCoordinates['bottom'] / frameShape['height'] <= BOTTOM_START_PERC  \
+    conditionGoLeft = rectangleCoordinates['top'] / frameShape['height'] <= rectangleBoundaries['TOP_START_PERC'] \
+                        and rectangleCoordinates['right'] / frameShape['width'] > rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC']
+                        #and rectangleCoordinates['bottom'] / frameShape['height'] <= rectangleBoundaries['BOTTOM_START_PERC']  \
 
-    #conditionGoDown = rectangleCoordinates['bottom']  / frameShape['height'] < 1 - BORDER_LIMIT_HEIGHT_PERC \
+    #conditionGoDown = rectangleCoordinates['bottom']  / frameShape['height'] < 1 - rectangleBoundaries['BORDER_LIMIT_HEIGHT_PERC'] \
     conditionGoDown = rectangleCoordinates['bottom']  / frameShape['height'] < 1 \
-                        and rectangleCoordinates['right']  / frameShape['width'] <= BORDER_LIMIT_WIDTH_PERC
+                        and rectangleCoordinates['right']  / frameShape['width'] <= rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC']
                         #and rectangleCoordinates['left'] == BOTTOM_START + (LEFT_START - RIGHT_START)
 
-    #conditionGoRight = rectangleCoordinates['bottom']  / frameShape['height'] >= 1 - BORDER_LIMIT_HEIGHT_PERC\
-    #                    and rectangleCoordinates['left']  / frameShape['width'] < 1 - BORDER_LIMIT_WIDTH_PERC
+    #conditionGoRight = rectangleCoordinates['bottom']  / frameShape['height'] >= 1 - rectangleBoundaries['BORDER_LIMIT_HEIGHT_PERC']\
+    #                    and rectangleCoordinates['left']  / frameShape['width'] < 1 - rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC']
     conditionGoRight = rectangleCoordinates['bottom']  / frameShape['height'] >= 1 \
                         and rectangleCoordinates['left']  / frameShape['width'] < 1
                         # and rectangleCoordinates['top'] == BORDER_LIMIT + (BOTTOM_START - TOP_START)\
 
-    #conditionGoUp = rectangleCoordinates['top']  / frameShape['height'] > BORDER_LIMIT_HEIGHT_PERC \
+    #conditionGoUp = rectangleCoordinates['top']  / frameShape['height'] > rectangleBoundaries['BORDER_LIMIT_HEIGHT_PERC'] \
     conditionGoUp = rectangleCoordinates['top']  / frameShape['height'] > 0\
-                        and rectangleCoordinates['left']  / frameShape['width'] >= 1 - BORDER_LIMIT_WIDTH_PERC
-                        #and rectangleCoordinates['left']  / frameShape['width'] >= 1 - BORDER_LIMIT_WIDTH_PERC
+                        and rectangleCoordinates['left']  / frameShape['width'] >= 1 - rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC']
+                        #and rectangleCoordinates['left']  / frameShape['width'] >= 1 - rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC']
                         #and rectangleCoordinates['right'] == frameShape['width'] - BORDER_LIMIT - (LEFT_START - RIGHT_START) \
 
 #    print("conditionGoLeft", conditionGoLeft)
@@ -231,3 +231,63 @@ def updateRectangleShapeViaPercentages(currentClass, rectangleCoordinates, frame
     return rectangleCoordinates
 
 
+def updateRectangleManually(currentClass, rectangleCoordinates, frameShape):
+    print("======================================================")
+    print("You will now input the shape of the rectangle you want.")
+    print("Each number is a float from 0 to 1 and denotes the percentage")
+    print("of screen in the respective dimension. Top left corner")
+    print("of the image is (0,0); numbers raise to left and bottom.")
+    print("Be aware that you need to use '.' as the decimal delimiter.")
+    success = False
+    while(not success):
+        inputed = input("TOP_START_PERCENTAGE: ")
+        try:
+            TOP_START_LOCAL_PERC = float(inputed)
+            if float(inputed) < 0 or float(inputed) > 1:
+                raise ValueError
+        except ValueError:
+            print("your previous input was not correct. try again")
+            continue
+        inputed = input("BOTTOM_START_PERCTAGE: ")
+        try:
+            BOTTOM_START_LOCAL_PERC = float(inputed)
+            if float(inputed) < 0 or float(inputed) > 1:
+                raise ValueError
+        except ValueError:
+            print("your previous input was not correct. try again")
+            continue
+        inputed = input("LEFT_START_PERCENTAGE: ")
+        try:
+            RIGHT_START_LOCAL_PERC = float(inputed)
+            if float(inputed) < 0 or float(inputed) > 1:
+                raise ValueError
+        except ValueError:
+            print("your previous input was not correct. try again")
+            continue
+        inputed = input("RIGHT_START_PERCENTAGE: ")
+        try:
+            LEFT_START_LOCAL_PERC = float(inputed)
+            if float(inputed) < 0 or float(inputed) > 1:
+                raise ValueError
+        except ValueError:
+            print("your input was not correct. try again")
+            continue
+        success = True
+        break
+    
+    rectangleCoordinates = {'top': int(TOP_START_LOCAL_PERC * frameShape['height']) , 
+                            'right': int(RIGHT_START_LOCAL_PERC * frameShape['width'] ), 
+                            'bottom': int(BOTTOM_START_LOCAL_PERC * frameShape['height']), 
+                            'left': int(LEFT_START_LOCAL_PERC * frameShape['width'])}
+    # we need to update the global version of these variables as well
+    # otherwise our conditions for going in circle are compromized
+    rectangleBoundaries = {
+    'TOP_START_PERC' : TOP_START_LOCAL_PERC,
+    'RIGHT_START_PERC' : RIGHT_START_LOCAL_PERC,
+    'BOTTOM_START_PERC' : BOTTOM_START_LOCAL_PERC,
+    'LEFT_START_PERC' : LEFT_START_LOCAL_PERC,
+
+    'BORDER_LIMIT_WIDTH_PERC' : 1 - RIGHT_START_PERC,
+    'BORDER_LIMIT_HEIGHT_PERC' : 1 - TOP_START_PERC
+    }
+    return (rectangleCoordinates, rectangleBoundaries)
