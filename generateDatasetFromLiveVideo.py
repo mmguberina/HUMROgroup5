@@ -67,6 +67,7 @@ if __name__ == "__main__":
 
 
     newClassRectangleInit = False
+    firstOne = True
     numFramesToPause = 0
     while(True):
         (grabbed, frame) = camera.read()
@@ -110,8 +111,8 @@ if __name__ == "__main__":
                 rectangleCoordinates = doACounterClockwiseCirclePerc(rectangleCoordinates, frameShape, rectangleBoundaries)
     
                 # we're done with a class if the rectangle went back to the upper right corner
-                if rectangleCoordinates['top'] / frameShape['width'] <= BORDER_LIMIT_WIDTH_PERC \
-                        and rectangleCoordinates['left']  / frameShape['width'] >= 1 - BORDER_LIMIT_WIDTH_PERC:
+                if not firstOne and rectangleCoordinates['top'] / frameShape['width'] <= rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC'] \
+                        and rectangleCoordinates['left']  / frameShape['width'] >= 1 - rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC']:
                     if currentClass < len(classes):
                         currentClass += 1
     
@@ -124,6 +125,11 @@ if __name__ == "__main__":
                     else:
                         print("This data recording session is done! Thanks for your time!")
                         break
+                else:
+                    if rectangleCoordinates['top'] / frameShape['width'] <= rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC'] \
+                        and rectangleCoordinates['left']  / frameShape['width'] >= 1 - rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC']:
+                            firstOne = False
+
     
                 # write to file
                 if num_frames % 5 == 0:
@@ -161,8 +167,9 @@ if __name__ == "__main__":
                     inputed = input("Are you satisfied with the triangle shape[Y/n]?")
                     if inputed == "Y" or inputed == "y":
                         newClassRectangleInit = True
-                    if not inputed == "Y"  and not inputed == "y" and not inputed == "n":
-                        print("i'll take that as a no.")
+                    else:
+                        numFramesToPause = 30
+
 
 
         num_frames += 1

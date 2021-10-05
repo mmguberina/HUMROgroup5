@@ -272,6 +272,14 @@ def updateRectangleManually(currentClass, rectangleCoordinates, frameShape):
         except ValueError:
             print("your input was not correct. try again")
             continue
+        if RIGHT_START_LOCAL_PERC > LEFT_START_LOCAL_PERC:
+            print("the left is bigger than the right and that's not OK")
+            print("please swith them")
+            continue
+        if TOP_START_LOCAL_PERC > BOTTOM_START_LOCAL_PERC:
+            print("the top is bigger than the bottom and that's not OK")
+            print("please swith them")
+            continue
         success = True
         break
     
