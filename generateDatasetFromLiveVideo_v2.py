@@ -44,11 +44,11 @@ completedAClass = False
 currentClass = 0
 
 # this one gets the /dev/video0 camera
-#camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture(0)
 # NOTE reading from ip works! you just need to check that the ip is right
 # and that the ip is correct
 #camera = cv2.VideoCapture("http://192.168.43.1:8080/video")
-camera = cv2.VideoCapture("http://192.168.1.5:8080/video")
+#camera = cv2.VideoCapture("http://192.168.1.5:8080/video")
 
 # these are the starting coordinates
 # NOTE top and left determine the boudaries of the traced out path
