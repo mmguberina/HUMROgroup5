@@ -122,7 +122,7 @@ def doACounterClockwiseCirclePerc(rectangleCoordinates, frameShape, rectangleBou
 #    print("conditionGoRight", conditionGoRight)
 #    print("conditionGoUp", conditionGoUp)
 
-    offset = 6
+    offset = 5
     if conditionGoLeft:
         #print(rectangleCoordinates)
         rectangleCoordinates = moveRectangleLeft(rectangleCoordinates, offset)
@@ -212,22 +212,10 @@ def updateRectangleShapeViaPercentages(currentClass, rectangleCoordinates, frame
         BOTTOM_START_LOCAL_PERC = 0.4583333333333333 - 0.20833333333333334
         LEFT_START_LOCAL_PERC = 0.921875 
     
-    # height / width
-#    default_frame_shape = {'height' : 480, 'width' : 640}
-#    #this_aspect_ration = frameShape['height'] / frameShape['width']
-#    #height_fix = default_frame_shape['height'] / frameShape['height']
-#    #width_fix = default_frame_shape['width'] / frameShape['width']
-# TODO fix this
-    height_fix = 1
-    width_fix = 1
-    #fix_right = frame
-    #default_aspect_ratio = 0.75
-    #currentAspectRation = frameShape['height'] / frameShape['width']
-    #fix_my_ratio = default_aspect_ratio / currentAspectRation
     rectangleCoordinates = {'top': int(TOP_START_LOCAL_PERC * frameShape['height']) , 
                             'right': int(RIGHT_START_LOCAL_PERC * frameShape['width'] ), 
-                            'bottom': int((BOTTOM_START_LOCAL_PERC / height_fix) * frameShape['height']), 
-                            'left': int((LEFT_START_LOCAL_PERC / width_fix) * frameShape['width'])}
+                            'bottom': int((BOTTOM_START_LOCAL_PERC) * frameShape['height']), 
+                            'left': int((LEFT_START_LOCAL_PERC) * frameShape['width'])}
     return rectangleCoordinates
 
 

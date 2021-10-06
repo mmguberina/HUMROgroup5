@@ -3,6 +3,28 @@ import cv2
 #import datetime
 from utils import *
 import time
+# TODO remove after done debugging
+import pdb
+
+## TODO
+# this rectangle going in a circle thing is stupid and broken
+# and debbuging it is a pain in the ass
+# that is because it is a stupid approach
+# futhermore it generates a limited set of data
+# and it goes around only in 1 shape
+# all in all it is stupid and bad on at least 2 levels
+
+# a new NEW APPROACH is to choose a point
+# and then draw the rectangle so that that point is its center
+# then you can easily check whether the point is valid
+# and you can check the rectangle position validity before drawing it.
+# no online checking, no idiotic uncessary run-time errors.
+# also, you can very easily tell the user where to go by
+# drawing all of the points of the path
+# and that way you also get arbitrary paths for free.
+# not only that, you can resize the rectangle easily while
+# keeping the aspect ratio intact!
+# thus you solve the problem of different distances for free as well
 
 # here we interpret classes in the broadest possible sense.
 # this is done as it that approach may lead to better performance, idk.
@@ -41,6 +63,7 @@ frameShape = {'height' : 0, 'width': 0}
 NUM_FRAMES_START = 150
 user = input("Please enter you name: ")
 dataPoint_index = 0
+rectangleBoundaries = {}
 
 
 if __name__ == "__main__":
@@ -67,7 +90,6 @@ if __name__ == "__main__":
 
 
     newClassRectangleInit = False
-    firstOne = True
     numFramesToPause = 0
     while(True):
         (grabbed, frame) = camera.read()
@@ -100,6 +122,9 @@ if __name__ == "__main__":
         # before starting, show an example image
         # TODO take a picture of your hand showing each example
         if num_frames >= NUM_FRAMES_START:
+            print("rectangleCoordinates", rectangleCoordinates)
+            print("rectangleBoundaries", rectangleBoundaries)
+            
             showMessage("show " + classes[currentClass] + " in rectangle",
                         clone, frameShape)
             if not newClassRectangleInit:
@@ -111,7 +136,7 @@ if __name__ == "__main__":
                 rectangleCoordinates = doACounterClockwiseCirclePerc(rectangleCoordinates, frameShape, rectangleBoundaries)
     
                 # we're done with a class if the rectangle went back to the upper right corner
-                if not firstOne and rectangleCoordinates['top'] / frameShape['width'] <= rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC'] \
+                if num_frames > NUM_FRAMES_START + 10 and rectangleCoordinates['top'] / frameShape['width'] <= rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC'] \
                         and rectangleCoordinates['left']  / frameShape['width'] >= 1 - rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC']:
                     if currentClass < len(classes):
                         currentClass += 1
@@ -125,10 +150,6 @@ if __name__ == "__main__":
                     else:
                         print("This data recording session is done! Thanks for your time!")
                         break
-                else:
-                    if rectangleCoordinates['top'] / frameShape['width'] <= rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC'] \
-                        and rectangleCoordinates['left']  / frameShape['width'] >= 1 - rectangleBoundaries['BORDER_LIMIT_WIDTH_PERC']:
-                            firstOne = False
 
     
                 # write to file
