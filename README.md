@@ -3,7 +3,7 @@ Repository for group 5's project in the Humanoid robotics course at Chalmers
 
 Here we generate the data needed to train the classifier network.
 
-Right now, we have the following classes
+Right now, we have the following classes:
 
 Class name              | Image of class
 ------------------------|---------------
@@ -55,7 +55,32 @@ k             | move bottom side up
 l             | move right side to right 
 y             | finish adjusting
 
-The 
+The rectangle will then start going around the screen in a counter-clockwise
+manner and will follow the edges.
+
+###IMPORTANT:
+When you are done, please use open Filezilla and send me the generated data
+(the entire content of the dataset directory). Once everything has
+been (successfully) sent, you may delete the contents of your dataset directory.
+I have ~1TB of storage on my server so I hope we should be fine.
+
+Use the following to connect:
+- host : 46.239.113.170 (may change, if something doesn't work please contact me)
+- user : humro
+- password : greendragoneatsapples
+- port : 35174
+
+Filezilla will say that it does not trust my certificate (nor should it by default).
+This is so because i generated the certificate myself and did not validate it
+(for money) with a 3rd party. Please accept the certificate and proceed.
+
+## Please do the following when generating data
+0. try to perform the challenge correctly :)
+1. vary the distance between your lovely self and the camera
+2. put your hand in various positions with respect to the rest of you body
+3. perform all of the above in different lighting conditions
+4. perform all of the above with different backgrounds
+5. (optional) ask your friends to do the same
 
 ### Configuration variables
 #### Capture device 
