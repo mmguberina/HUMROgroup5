@@ -29,18 +29,18 @@ def getClasses():
             }
     return classes
 
-def updateRectangleManually(rectangleCoordinates):
+def updateRectangleManually(rectangleCoordinates, offset):
     doneAdjusting = False
     keypress = cv2.waitKey(1) & 0xFF
     
     if keypress == ord("h"):
-        rectangleCoordinates['right'] -= 1
+        rectangleCoordinates['right'] -= offset
     if keypress == ord("j"):
-        rectangleCoordinates['bottom'] +=1
+        rectangleCoordinates['bottom'] += offset
     if keypress == ord("k"):
-        rectangleCoordinates['bottom'] -= 1
+        rectangleCoordinates['bottom'] -= offset
     if keypress == ord("l"):
-        rectangleCoordinates['right'] += 1
+        rectangleCoordinates['right'] += offset
     
     if keypress == ord("y"):
         doneAdjusting = True
