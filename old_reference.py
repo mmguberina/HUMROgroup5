@@ -60,7 +60,7 @@ classes = {
 
 
 frameShape = {'height' : 0, 'width': 0}
-NUM_FRAMES_START = 150
+NUM_FRAMES_START = 1500
 user = input("Please enter you name: ")
 dataPoint_index = 0
 rectangleBoundaries = {}
@@ -111,7 +111,8 @@ if __name__ == "__main__":
 
         # display intro message 
         if num_frames < 50:
-            rectangleCoordinates = updateRectangleShapeViaPercentages(currentClass, rectangleCoordinates, frameShape)
+            if num_frames == 0:
+                rectangleCoordinates = updateRectangleShapeViaPercentages(currentClass, rectangleCoordinates, frameShape)
             showMessage("lookin' good! get comfy :)", clone, frameShape)
 
         # warm up the user
@@ -204,8 +205,21 @@ if __name__ == "__main__":
         keypress = cv2.waitKey(1) & 0xFF
 
         # if the user pressed "q", then stop looping
-        if keypress == ord("q"):
-            break
+        #if keypress == ord("q"):
+        #    break
+
+        if keypress == ord("h"):
+        #    rectangleBoundaries['RIGHT_START_PERC'] -= 0.01
+            rectangleCoordinates['right'] -= 1
+        if keypress == ord("j"):
+        #    rectangleBoundaries['BOTTOM_START_PERC'] += 0.01
+            rectangleCoordinates['bottom'] +=1
+        if keypress == ord("k"):
+        #    rectangleBoundaries['TOP_START_PERC'] -= 0.01
+            rectangleCoordinates['top'] -= 1
+        if keypress == ord("l"):
+        #    rectangleBoundaries['LEFT_START_PERC'] += 0.01
+            rectangleCoordinates['left'] += 1
 
 
     # free up memory 'cos why not be nice
