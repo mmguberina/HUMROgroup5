@@ -1,0 +1,16 @@
+things to do to end this
+
+2. write the ``main loop'' for the human-robot communication problem, draw STM diagram,
+   this includes drawing the current expression on screen
+----> do this with a tkinter gui! you have bookmarked the relevant tutorials, it's super chill
+X. generate 2 far away datasets in bright light conditions (modify data generation script)
+----> 2nd order problem
+X. generate ``false'' dataset - create bait images which don't contain any class, but look somewhat similar.
+   also add non-bait datapoints with different backgrounds (give it your wallpaper folder lol)
+----> 2nd order problem
+X. curate entire current dataset, note what's lacking (write script for easy deletion, start from show dataset)
+----> 25k images, not gonna happen bro
+5. reinstall everything on virt and local, first virt, do training,
+	then do inference on both (serve via lan, then tunnel with ssh)
+8. write report
+
