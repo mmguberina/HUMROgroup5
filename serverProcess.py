@@ -8,7 +8,7 @@ class ClientHandler(threading.Thread):
         self.likeliestClassValue = likeliestClassValue
 
     def run(self):
-        print("started thread")
+        #print("started thread")
         data = self.comm_socket.send(bytes(str(self.likeliestClassValue), "utf-8"))
         self.comm_socket.close()
 

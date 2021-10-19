@@ -30,10 +30,12 @@ with open(classesFile, 'rt') as f:
 
 # Give the configuration and weight files for the model and load the network using them.
 
+modelConfiguration = "./yolo-hand_gestures.cfg";
 #modelConfiguration = "./yolov4-tiny-hand_gestures.cfg";
-modelConfiguration = "/home/gospodar/yolov4-tiny-hand_gestures_bigger_input.cfg";
+#modelConfiguration = "/home/gospodar/yolov4-tiny-hand_gestures_bigger_input.cfg";
 #modelWeights = "../trained_nets/yolov4-tiny-hand_gestures_best.weights";
-modelWeights = "/home/gospodar/yolov4-tiny-hand_gestures_best.weights";
+#modelWeights = "/home/gospodar/yolov4-tiny-hand_gestures_best.weights";
+modelWeights = "../trained_nets/yolo-hand_gestures_last.weights"
 
 net = cv.dnn.readNetFromDarknet(modelConfiguration, modelWeights)
 if args.device == "cpu":
