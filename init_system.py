@@ -1,4 +1,5 @@
 import time
+import sys
 from multiprocessing import Process, Value, Array, Queue
 from inferenceProcess import inferenceProcess
 from serverProcess import serverProcess
@@ -23,6 +24,11 @@ if __name__ == "__main__":
     # init shared variables into shared memory
     # NOTE if remote you need to start inference_- and server_processes 
     # by calling ssh user@host -e 'python script_that_starts_those_two' (or whatever flag for the command)
+    # TODO use proper arg parser and actually write the remote part of the code
+#    if sys.argv[1] == "remote":
+#        remote = True
+#    else:
+#        remote = False
     likeliestClass = Value('i', 9)
     classCounter = Array('i', [0 for i in range(24)])
 

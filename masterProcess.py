@@ -1,5 +1,6 @@
 import socket
 import time
+from translation_utils import *
 
 def processOperand(response):
     pass
@@ -7,47 +8,77 @@ def processOperand(response):
 def processOperation(response):
     pass
 
-def updateGUI(queue, response):
-    queue.put({'set_text': response})
+# maintain state of text here
+def updateGUI(queue, symbol, currentTextInLabel):
+
+    if type(symbol) == int or symbol == "+" or symbol == "-" or symbol == "=":
+        currentTextInLabel += " " + str(symbol)
+        set_image = 'thinking'
+
+    if symbol == "thumb_up":
+        set_image = 'thumb_up'
+        currentTextInLabel = ""
+
+    if symbol == "ok":
+        set_image = 'smile'
+        currentTextInLabel = ""
+
+    if symbol == "not_ok":
+        set_image = 'terror'
+        currentTextInLabel = ""
 
 
+
+#'sleep'  ---> add some counter and the set that in gui
+
+    queue.put({'set_text': currentTextInLabel,
+                'set_image': set_image})
+
+
+
+    #TODO  if not this, then error, send 0 for now
+    return currentTextInLabel
 
 def masterProcess(host_addr, queue, emoji_list):
-    classes = {
-           0  :  "0_front",
-           1  :  "0_back",
-           2  :  "1_front",
-           3  :  "1_back",
-           4  :  "2_thumb_front",
-           5  :  "2_thumb_back",
-           6  :  "2_front",
-           7  :  "2_back",
-           8  :  "3_thumb_front",
-           9  :  "3_thumb_back",
-           10 :  "3_front",
-           11 :  "3_back",
-           12 :  "4_front",
-           13 :  "4_back",
-           14 :  "5_front",
-           15 :  "5_back",
-           16 :  "+_right_up_right_front",
-           17 :  "+_right_up_left_front",
-           18 :  "minus",
-           19 :  "ok_3_fingers",
-           20 :  "ok_thubm_up",
-           21 :  "not_ok_thumb_down",
-           22 :  "equals",
-           23 :  "fck_u"
-           }
+    classes = getClasses()
+    # hand socket thing can be here for all we care
+
+    localIP     = "192.168.234.232"
+    localPort   = 5001
+    bufferSize  = 1024
+    hand_server_addr = (localIP, localPort)
+
+    UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+
+    host_middle = "46.239.113.170"
+    host_middle_port = 7777
+    host_middle_addr = (host_middle, host_middle_port)
+
+    currentTextInLabel = ""
 
     while True:
-        time.sleep(0.5)
+#        time.sleep(0.5)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect(host_addr)
     #    print("n of sent bytes:", bytes_sent)
         response = s.recv(1024)
         print(response)
-        updateGUI(queue, response)
+        translated_to_symbol = translation_table(int(response), "robot_hand")
+        robot_hand_symbol = bytes(str(translated_to_symbol), 'utf-8')
+        UDPClientSocket.sendto(robot_hand_symbol, hand_server_addr)
+        translated_to_symbol_for_gui = translation_table(int(response), "gui")
+
+        currentTextInLabel = updateGUI(queue, translated_to_symbol_for_gui, currentTextInLabel)
+
+        # NOTE send this to remote middle-server
+#        socket_to_middle = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#        socket_to_middle.connect(host_middle_addr)
+#        indentifier = bytes("master:", 'utf-8')
+#        socket_to_middle.send(indentifie + response)
+#        socket_to_middle.close()
+    #    print("n of sent bytes:", bytes_sent)
+        
+
 
         # here you need to not take the same symbol every time
         s.close()

@@ -21,6 +21,11 @@ for fil in files_in_datadir:
 
 i = 0
 frameShape = {'height' : 0, 'width': 0}
+
+outputFile = "showing_dataset.mp4"
+vid_writer = cv.VideoWriter(outputFile, cv.VideoWriter_fourcc('M','J','P','G'), 30, (round(cap.get(cv.CAP_PROP_FRAME_WIDTH)),round(cap.get(cv.CAP_PROP_FRAME_HEIGHT))))
+
+
 while True:
     keypress = cv2.waitKey(1) & 0xFF
     
@@ -53,6 +58,7 @@ while True:
                         (0,255,0), 2)
 
 
+    vid_writer.write(frame.astype(np.uint8))
 
     cv2.imshow("pda", frame)
     i += 1

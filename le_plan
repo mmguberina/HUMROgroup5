@@ -14,3 +14,17 @@ X. curate entire current dataset, note what's lacking (write script for easy del
 	then do inference on both (serve via lan, then tunnel with ssh)
 8. write report
 
+BIGGER TODOS
+1. finish GUI
+2. install opencv and darknet on chalmers virtual computer
+3. try to run inference and remote inference
+4. remove sleep from master process
+
+TODO IF YOU GET BIGGER TODO
+1. train bigger network by incrementally sending data and starting/stopping training
+2. make server process run on home computer if remote_tcp_server is set
+3. give everything necessary the remote/local flag and write appropriate commands
+   and enter those parameters via argparse
+4. give hand thread the option to read from remote_tcp_server (also configure via argument flag)
+	and configure the remote tcp server, master process and the hand thread to comply with 
+	the talking protocol which enables that

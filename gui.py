@@ -2,8 +2,8 @@ import tkinter as tk
 import threading
 from PIL import ImageTk, Image
 from multiprocessing import Queue
-import time
 import random
+from translation_utils import *
 #import os
 
 
@@ -47,7 +47,7 @@ class GUI:
         
         # create image and text labels
         self.imageLabel = tk.Label(root, image=self.emojis['smile'])
-        self.textLabel = tk.Label(root, text="Ready to Work!")
+        self.textLabel = tk.Label(root, text="Ready to Work!", font=("Helvetica", 24))
         
         # add a quit button
         self.quit_button = tk.Button(self.root, text="Quit", bg="#5E99FF", fg="#ffffff", command=self.root.destroy) 
