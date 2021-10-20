@@ -62,7 +62,7 @@ def masterProcess(host_addr, queue, emoji_list):
         s.connect(host_addr)
     #    print("n of sent bytes:", bytes_sent)
         response = s.recv(1024)
-        print(response)
+        #print(response)
         translated_to_symbol = translation_table(int(response), "robot_hand")
         robot_hand_symbol = bytes(str(translated_to_symbol), 'utf-8')
         UDPClientSocket.sendto(robot_hand_symbol, hand_server_addr)
@@ -82,4 +82,5 @@ def masterProcess(host_addr, queue, emoji_list):
 
         # here you need to not take the same symbol every time
         s.close()
+        time.sleep(0.2)
     

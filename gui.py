@@ -15,7 +15,7 @@ class GetCommandThread(threading.Thread):
         self._check = _check
 
     def run(self):
-        print("worker thread doing stuff")
+        #print("worker thread doing stuff")
         commands = self.queue.get()
         # maybe just wait untill it's non-empty with another blocking call?
         # then .get() from the main thread
@@ -76,7 +76,7 @@ class GUI:
     def callback(self, event=None, *args):
         if not self.localQueue.empty():
             commands = self.localQueue.get()
-            print(commands)
+            #print(commands)
             # get commands here
             if 'set_image' in commands:
                 self.setImage(commands['set_image'])

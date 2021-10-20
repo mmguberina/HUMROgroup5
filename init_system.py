@@ -1,6 +1,6 @@
 import time
 import sys
-from multiprocessing import Process, Value, Array, Queue
+from multiprocessing import Process, Value, Array, Queue, Lock
 from inferenceProcess import inferenceProcess
 from serverProcess import serverProcess
 from masterProcess import masterProcess
@@ -29,8 +29,9 @@ if __name__ == "__main__":
 #        remote = True
 #    else:
 #        remote = False
-    likeliestClass = Value('i', 9)
+    likeliestClass = Value('i', 0)
     classCounter = Array('i', [0 for i in range(24)])
+    inferenceLock = Lock()
 
     # this is used to communicate between the master and gui processes
     queue = Queue()
@@ -44,7 +45,8 @@ if __name__ == "__main__":
             }
     
     # init inference process 
-    inference_process = Process(target=inferenceProcess, args=(likeliestClass, classCounter,))
+    #inference_process = Process(target=inferenceProcess, args=(likeliestClass, classCounter, ))
+    inference_process = Process(target=inferenceProcess, args=(likeliestClass, classCounter, inferenceLock))
     inference_process.daemon = True
     inference_process.name = "inference"
 
@@ -53,7 +55,7 @@ if __name__ == "__main__":
     host = ''
     port = 7777
     host_addr = (host, port)
-    server_process = Process(target=serverProcess, args=(host_addr, likeliestClass, classCounter,))
+    server_process = Process(target=serverProcess, args=(host_addr, likeliestClass, classCounter, inferenceLock))
     server_process.name = "tcp_server"
     server_process.daemon = True
 
@@ -63,6 +65,7 @@ if __name__ == "__main__":
 
     # start the processes
     inference_process.start()
+    time.sleep(0.5)
     server_process.start()
     time.sleep(0.2)
     master_process.start()
@@ -80,6 +83,6 @@ if __name__ == "__main__":
     # and now do nothing
     # this will never be called because of root.mainloop, but whatever brah
     inference_process.join()
-    masterProcess.join()
+    master_process.join()
     server_process.join()
 

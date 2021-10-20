@@ -18,12 +18,13 @@ for fil in files_in_datadir:
     if rezLabel != None:
         labelFiles.append(rezLabel.string)
 
+# accidentaly deleted reducing dataset code but who cares
 
 i = 0
 frameShape = {'height' : 0, 'width': 0}
 
-outputFile = "showing_dataset.mp4"
-vid_writer = cv.VideoWriter(outputFile, cv.VideoWriter_fourcc('M','J','P','G'), 30, (round(cap.get(cv.CAP_PROP_FRAME_WIDTH)),round(cap.get(cv.CAP_PROP_FRAME_HEIGHT))))
+outputFile = "showing_dataset.avi"
+vid_writer = cv2.VideoWriter(outputFile, cv2.VideoWriter_fourcc('M','J','P','G'), 30, (round(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),round(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
 
 
 while True:

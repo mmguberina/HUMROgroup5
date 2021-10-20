@@ -13,7 +13,8 @@ class ClientHandler(threading.Thread):
         self.comm_socket.close()
 
 
-def serverProcess(host_addr, likeliestClass, classCounter):
+#def serverProcess(host_addr, likeliestClass, classCounter):
+def serverProcess(host_addr, likeliestClass, classCounter, inferenceLock):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(host_addr)
     s.listen()
@@ -21,9 +22,11 @@ def serverProcess(host_addr, likeliestClass, classCounter):
     while True:
         comm_socket, comm_addr = s.accept()
         # read likeliest class
+        inferenceLock.acquire()
         likeliestClass.acquire()
         likeliestClassValue = likeliestClass.value
         likeliestClass.release()
+        inferenceLock.release()
 
         # clean the counter as we're now going to infer the next symbol
         classCounter.acquire()

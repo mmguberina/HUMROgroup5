@@ -78,7 +78,13 @@ def postprocess(frame, classes, outs, confThreshold, nmsThreshold):
 
 
 
-def inferenceProcess(likeliestClass, classCounter):
+#def inferenceProcess(likeliestClass, classCounter):
+def inferenceProcess(likeliestClass, classCounter, inferenceLock):
+
+    # lock until inference is ready
+    inferenceLock.acquire()
+    inferenceLock_acquired = True
+    #print("inference locked by inference")
 
     # Initialize the parameters
     confThreshold = 0.5  #Confidence threshold
@@ -139,7 +145,7 @@ def inferenceProcess(likeliestClass, classCounter):
     ########################################################################
     # we have to count what we have found in last 10 frames
     # and we'll use that as the actual prediction
-    CLASS_INFERENCE_THRESHOLD = 15
+    CLASS_INFERENCE_THRESHOLD = 5
     symbol_infered = False
     likeliestClass.acquire()
     likeliestClassLockAcquired = True
@@ -176,24 +182,34 @@ def inferenceProcess(likeliestClass, classCounter):
         for i in range(len(classes)):
             if i in classIndeces:
                 classCounter[i] += 1
-                classCounter[i] = max(classCounter[i], CLASS_INFERENCE_THRESHOLD)
+                if classCounter[i] > CLASS_INFERENCE_THRESHOLD:
+                    classCounter[i] = CLASS_INFERENCE_THRESHOLD
                 if classCounter[i] == CLASS_INFERENCE_THRESHOLD:
                     symbol_infered = True
+                    if inferenceLock_acquired == True:
+                        inferenceLock.release()
+                        inferenceLock_acquired = False
+                        #print("from inference thread: inference released")
                     if likeliestClassLockAcquired == True:
                         likeliestClass.value = i
                         likeliestClass.release()
                         likeliestClassLockAcquired = False
+                        #print("from inference thread: inference unclocked!")
                     else:
                         likeliestClass.acquire()
                         likeliestClass.value = i
                         likeliestClass.release()
                         likeliestClassLockAcquired = False
 
+
             else:
                 if classCounter[i] > 0:
                     classCounter[i] -= 1
-
+        
         classCounter.release()
+        if symbol_infered == False and inferenceLock_acquired == False:
+            inferenceLock.acquire()
+            inferenceLock_acquired = True
     
     
         # Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
