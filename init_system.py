@@ -25,10 +25,10 @@ if __name__ == "__main__":
     # NOTE if remote you need to start inference_- and server_processes 
     # by calling ssh user@host -e 'python script_that_starts_those_two' (or whatever flag for the command)
     # TODO use proper arg parser and actually write the remote part of the code
-#    if sys.argv[1] == "remote":
-#        remote = True
-#    else:
-#        remote = False
+    if sys.argv[1] == "remote":
+        remote = True
+    else:
+        remote = False
     likeliestClass = Value('i', 0)
     classCounter = Array('i', [0 for i in range(24)])
     inferenceLock = Lock()
@@ -52,7 +52,10 @@ if __name__ == "__main__":
 
 
     # set things up for the server process
-    host = ''
+    if remote == False:
+        host = ''
+    else:
+        host = "192.168.1.7"
     port = 7777
     host_addr = (host, port)
     server_process = Process(target=serverProcess, args=(host_addr, likeliestClass, classCounter, inferenceLock))
@@ -64,10 +67,11 @@ if __name__ == "__main__":
     master_process.name = "master"
 
     # start the processes
-    inference_process.start()
-    time.sleep(0.5)
-    server_process.start()
-    time.sleep(0.2)
+    if remote == False:
+        inference_process.start()
+        time.sleep(0.5)
+        server_process.start()
+#    time.sleep(0.2)
     master_process.start()
 
     # run the gui process
@@ -82,7 +86,8 @@ if __name__ == "__main__":
 
     # and now do nothing
     # this will never be called because of root.mainloop, but whatever brah
-    inference_process.join()
+    if 0 == 1:
+        inference_process.join()
+        server_process.join()
     master_process.join()
-    server_process.join()
 

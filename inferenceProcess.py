@@ -150,7 +150,11 @@ def inferenceProcess(likeliestClass, classCounter, inferenceLock):
     likeliestClass.acquire()
     likeliestClassLockAcquired = True
     
-    while cv.waitKey(1) < 0:
+    #while cv.waitKey(1) < 0:
+    while True:
+        keypress = cv.waitKey(1) & 0xFF
+        if keypress == ord("q"):
+            exit()
         # get frame from the video
         hasFrame, frame = cap.read()
         

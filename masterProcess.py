@@ -12,21 +12,25 @@ def processOperation(response):
 def updateGUI(queue, symbol, currentTextInLabel):
 
     if type(symbol) == int or symbol == "+" or symbol == "-" or symbol == "=":
-        currentTextInLabel += " " + str(symbol)
+        if len(currentTextInLabel) > 0:
+            if currentTextInLabel[-1] != str(symbol):
+                currentTextInLabel += " " + str(symbol)
+        else:
+            currentTextInLabel += " " + str(symbol)
+
         set_image = 'thinking'
 
     if symbol == "thumb_up":
         set_image = 'thumb_up'
         currentTextInLabel = ""
 
-    if symbol == "ok":
+    if symbol == "O":
         set_image = 'smile'
         currentTextInLabel = ""
 
     if symbol == "not_ok":
         set_image = 'terror'
         currentTextInLabel = ""
-
 
 
 #'sleep'  ---> add some counter and the set that in gui

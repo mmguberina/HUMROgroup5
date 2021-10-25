@@ -142,7 +142,7 @@ else:
 # Get the video writer initialized to save the output video
 if (not args.image):
     vid_writer = cv.VideoWriter(outputFile, cv.VideoWriter_fourcc('M','J','P','G'), 30, (round(cap.get(cv.CAP_PROP_FRAME_WIDTH)),round(cap.get(cv.CAP_PROP_FRAME_HEIGHT))))
-
+jj = 0
 while cv.waitKey(1) < 0:
     
     # get frame from the video
@@ -177,5 +177,6 @@ while cv.waitKey(1) < 0:
         cv.imwrite(outputFile, frame.astype(np.uint8));
     else:
         vid_writer.write(frame.astype(np.uint8))
-
+    print(jj)
+    jj += 1
     cv.imshow(winName, frame)

@@ -4,6 +4,7 @@ import sys
 import numpy as np
 import os.path
 import socket
+import time
 
 # Initialize the parameters
 confThreshold = 0.5  #Confidence threshold
@@ -140,7 +141,7 @@ elif (args.video):
 else:
     # Webcam input
     cap = cv.VideoCapture(0)
-
+cap = cv.VideoCapture("http://192.168.1.5:8080/video")
 ########################################################################
 # we have to count what we have found in last 10 frames
 # and we'll use that as the actual prediction
@@ -155,6 +156,8 @@ counterToSendSymbolTime = 0
 #port = 2001
 #clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+jj = 0
+start = time.time()
 while cv.waitKey(1) < 0:
     
     # get frame from the video
@@ -204,6 +207,10 @@ while cv.waitKey(1) < 0:
     t, _ = net.getPerfProfile()
     label = 'Inference time: %.2f ms' % (t * 1000.0 / cv.getTickFrequency())
     #cv.putText(frame, label, (0, 15), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
-
+    print(jj)
+    jj+=1
+    if jj == 100:
+        end = time.time()
+        print(end -start)
 
     cv.imshow(winName, frame)

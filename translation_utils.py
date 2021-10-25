@@ -18,10 +18,12 @@ def translation_table(classIndex, client):
     if classIndex == 22:
         return "="
 
+    if classIndex == 19  :  
+        return "O"
 
     if client != "robot_hand":
-        if classIndex == 19  :  
-            return "ok"
+#        if classIndex == 19  :  
+#            return "ok"
         if classIndex == 20:
             return "thumb_up"
         if classIndex == 21 :  

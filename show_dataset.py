@@ -1,6 +1,7 @@
 import cv2
 import subprocess
 import re
+import numpy as np
 
 child = subprocess.Popen(['ls', './dataset'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 files_in_datadir = child.stdout.read().decode('utf-8').split("\n")
@@ -18,25 +19,38 @@ for fil in files_in_datadir:
     if rezLabel != None:
         labelFiles.append(rezLabel.string)
 
+imagesFiles_redux = []
+labelFiles_redux = []
+
+for i in range(len(imagesFiles)):
+    if "marko2" in imagesFiles[i]:
+        if "23" in imagesFiles[i]:
+            continue
+        imagesFiles_redux.append(imagesFiles[i])
+        labelFiles_redux.append(labelFiles[i])
+
+
 # accidentaly deleted reducing dataset code but who cares
 
-i = 0
 frameShape = {'height' : 0, 'width': 0}
 
+capture = cv2.VideoCapture("./dataset/" + imagesFiles_redux[0])
+
 outputFile = "showing_dataset.avi"
-vid_writer = cv2.VideoWriter(outputFile, cv2.VideoWriter_fourcc('M','J','P','G'), 30, (round(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),round(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
+vid_writer = cv2.VideoWriter(outputFile, cv2.VideoWriter_fourcc('M','J','P','G'), 30, (round(capture.get(cv2.CAP_PROP_FRAME_WIDTH)),round(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))))
 
 
+i = 0
 while True:
     keypress = cv2.waitKey(1) & 0xFF
     
 
-    capture = cv2.VideoCapture("./dataset/" + imagesFiles[i])
+    capture = cv2.VideoCapture("./dataset/" + imagesFiles_redux[i])
     hasFrame, frame = capture.read()
     (frameShape['height'], frameShape['width']) = frame.shape[:2]
     if not hasFrame:
         print("we done")
-    labelFile = open("./dataset/" + labelFiles[i], 'r')
+    labelFile = open("./dataset/" + labelFiles_redux[i], 'r')
     line = labelFile.readline().split(" ")
     float_x_center = float(line[1])
     float_y_center = float(line[2])
@@ -61,8 +75,9 @@ while True:
 
     vid_writer.write(frame.astype(np.uint8))
 
-    cv2.imshow("pda", frame)
+#    cv2.imshow("pda", frame)
     i += 1
+    print(i)
 
     if keypress == ord("n"):
         continue
