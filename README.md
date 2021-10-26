@@ -30,7 +30,6 @@ ok_3_fingers            | ![picture alt](./examples/ok_3_fingers.png "Title is o
 ok_thubm_up             | ![picture alt](./examples/ok_thubm_up.png "Title is optional")
 not_ok_thumb_down       | ![picture alt](./examples/not_ok_thumb_down.png "Title is optional")
 equals                  | ![picture alt](./examples/equals.png "Title is optional")
-fck_u                   | ![picture alt](./examples/fck_u.png "Title is optional")
 
 ##Usage
 Make sure to first create the "dataset" directory.
