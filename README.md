@@ -1,5 +1,6 @@
 # HUMROgroup5
 Repository for group 5's project in the Humanoid robotics course at Chalmers
+The report will be made available at a later time. The system can be ran without a robotic if you want to test the vision capabilities. To start, clone the repository, download the weigths: the smaller network is available at https://drive.google.com/file/d/1_jNsGdboyXH6-c4XHjnWxAOINuGfAFCF/view?usp=sharing , and the larger at https://drive.google.com/file/d/1QjUIQbMeLW-58GiZtP7KQ2B0i0YGzZYN/view?usp=sharing . To use them, fix the paths in the code. Also, change the camera device in the inference process if desired. Finally, run Python init_system.py on a system with a Python with OpenCV and TkInter installed. We used Python 3.9.7, OpenCV 4.5.3 and TkInter 8.6. Possible you will also need to install PIL manually. We also use one NumPy function (argmax) so either install NumPy as well or change that function to an equivalent one.
 
 Here we generate the data needed to train the classifier network.
 
@@ -100,5 +101,3 @@ This variable is the offset by which the rectangle moves in pixels.
 It is most certainly too slow on HD, but it is nice on a small 640x480 resolution.
 Furthemore, this variables changes the step size when adjusting the rectangle size.
 
-# Running our trained networks
-To run those, you first need to download them. The smaller network is available at https://drive.google.com/file/d/1_jNsGdboyXH6-c4XHjnWxAOINuGfAFCF/view?usp=sharing , and the larger at https://drive.google.com/file/d/1QjUIQbMeLW-58GiZtP7KQ2B0i0YGzZYN/view?usp=sharing . To use them, fix the paths in the code. Also, change the camera device in the inference process if desired.
